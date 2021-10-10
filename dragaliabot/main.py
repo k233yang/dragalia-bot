@@ -3,7 +3,12 @@ import os
 import requests
 import urllib.request
 
+import stats
+import unit
+import data
+
 from bs4 import BeautifulSoup
+from discord.ext import commands
 
 from dotenv import load_dotenv
 
@@ -12,7 +17,6 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = discord.Client()
-
 
 @bot.event
 async def on_ready():
@@ -37,83 +41,38 @@ async def on_message(message):
                 
                 if charName.strip() == "help":
                         await message.channel.send("uhuh")
-                elif charName.strip() == " hello":
-                        await message.channel.send("smh")
+                elif charName.strip() == "hello":
+                        
+                        await message.channel.send("<:farren:896826606662877194>")
 
                 # Congregated both conditions
                 else:
                         if not(' ' in charName):
-                                URL = "https://dragalialost.wiki/w/" + message.content[3:length].lstrip()
+                                URL = data.characterUrl+ message.content[3:length].lstrip()
                                 
 
                         elif ' ' in charName:
                                 character = charName
                                 character = character.replace(' ', '_').lstrip()
-                                URL = "https://dragalialost.wiki/w/" + character
+                                URL = data.characterUrl + character
 
                         # Scraping Skill Names and Details
                         page = requests.get(URL)
 
                         soup = BeautifulSoup(page.content, "html.parser")
                         results = soup.find(id="mw-content-text")
-
-                        # Previous Way
-
-
-                        #elements = results.find_all("div", class_="skill-display-content")
-
-                        #skillname = results.find_all("div", class_="skill-display-header")
-
-                        #skillList = []
-
-                        #skillNames = []
-
-                        #skillCost = []
-
-                        # Get Skill Names
-                        #for skill in skillname:
-                                #skills = skill.find("a")
-                                #f skills.text not in skillNames:
-                                        #skillNames.append(skills.text)
-                                #print(skills.text)
-
-                        #print(elements)
-
-                        # Get Skill Descs
-                        #for element in elements:
-                                #paragraph = element.find("p")
-                                #killList.append(paragraph.text)
-                                #print(paragraph.text)
-
-                        #desc = ""
-
-                        #for i in range(len(skillNames)):
-                                #desc += "__**" + skillNames[i] + "**__" + "\n" + skillList[i]
-
-                        HP = results.find(id='adv-hp').text
-                        #print(HP.text)
-
-                        Str = results.find(id='adv-str').text
-                        #print(Str.text)
+                        spans = soup.find_all('img', alt=True)
 
                         Element = ""
-
                         Weapon = "Dragon"
                         
-                        spans = soup.find_all('img', alt=True)
-                        for line in spans:
-                                if "Element" in line['alt']:
-                                        Element = line['alt'].split(" ")[2][:-4]
-                                if "Weapon" in line['alt']:
-                                        Weapon = line['alt'].split(" ")[2][:-4]
+                        thisChar = unit.Unit(results, spans)
+                        charStats = thisChar.charStats
 
-                        Color = {
-                        "Flame" : 15158332,
-                        "Water" : 1752220,
-                        "Wind" : 3066993,
-                        "Shadow" : 800080,
-                        "Light" : 16776960
-                        }
+                        HP = charStats.hp
+                        Str = charStats.str
+                        Element = charStats.element
+                        Weapon = charStats.weapon                        
 
                         # VERY MESSY
 
@@ -131,7 +90,6 @@ async def on_message(message):
                         for res in test:
                                 skillTable.append(res.text.split('\n\n'))
 
-
                         #Skill Desciption & Details
                         for i in range(len(skillTable)):
                                 temp.append(skillTable[i][-4])
@@ -140,11 +98,9 @@ async def on_message(message):
                                 desc = skillTable[i][-3].split('\n')
                                 skillDesc.append(desc[-1])
                         
-
                         #Cleaning
                         for i in temp:
                                 skillDetails.append(i.split('\n'))
-
 
                         #Formatting Skill Desc
                         for i in range(len(skillDesc)):
@@ -195,7 +151,8 @@ async def on_message(message):
 
                         # GENERATING THE EMBEDDED FILE
                         # Character Details
-                        embed = discord.Embed(title = title, url = URL, description = "**HP: **" + HP + "  " + "**Str: **" + Str + "\n" + "**Element: **" + Element + "  " + "**Weapon: **" + Weapon, color = Color[Element])
+
+                        embed = discord.Embed(title = title, url = URL, description = "**HP: **" + HP + "  " + "**Str: **" + Str + "\n" + "**Element: **" + Element + "  " + "**Weapon: **" + Weapon, color = data.Color[Element])
                         embed.set_author(name = epithet)
                         if requests.get((iconURL)).status_code == 200:
                                 embed.set_thumbnail(url=iconURL)
@@ -205,7 +162,7 @@ async def on_message(message):
                         await message.channel.send(embed=embed)
 
                         # SKills
-                        embed = discord.Embed(title = "Skills", color = Color[Element])
+                        embed = discord.Embed(title = "Skills", color = data.Color[Element])
                         for i in range(len(skillDesc)):
                                 #Checks if skill is Shareable
                                 sharedIndex = skillDetails[i][2].find('Shared')
