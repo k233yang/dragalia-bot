@@ -31,28 +31,25 @@ async def on_message(message):
         #if message.content == "hello":
         #        await message.channel.send("hey dirtbag")
         if message.content[0:3] == "dl!":
-                input = message.content[3:length]
+                charName = message.content[3:length]
                 if message.content[3] == ' ':
-                        input = message.content[4:length]
+                        charName = message.content[4:length]
                 
-                if input.strip() == "help":
+                if charName.strip() == "help":
                         await message.channel.send("uhuh")
-                elif input.strip() == " hello":
+                elif charName.strip() == " hello":
                         await message.channel.send("smh")
 
                 # Congregated both conditions
                 else:
-                        if not(' ' in input):
+                        if not(' ' in charName):
                                 URL = "https://dragalialost.wiki/w/" + message.content[3:length].lstrip()
                                 
 
-                        elif ' ' in input:
-                                character = input
+                        elif ' ' in charName:
+                                character = charName
                                 character = character.replace(' ', '_').lstrip()
                                 URL = "https://dragalialost.wiki/w/" + character
-
-                        iconURL = URL+"/Misc"
-                        iconlocation = ""
 
                         # Scraping Skill Names and Details
                         page = requests.get(URL)
@@ -60,55 +57,166 @@ async def on_message(message):
                         soup = BeautifulSoup(page.content, "html.parser")
                         results = soup.find(id="mw-content-text")
 
-                        title = soup.find('title').get_text().replace("- Adventurer", '')
-                        epithet = soup.find("div", class_="panel-heading").get_text().replace(input, '')
+                        # Previous Way
 
 
-                        elements = results.find_all("div", class_="skill-display-content")
+                        #elements = results.find_all("div", class_="skill-display-content")
 
-                        skillname = results.find_all("div", class_="skill-display-header")
+                        #skillname = results.find_all("div", class_="skill-display-header")
 
+                        #skillList = []
 
-                        skillList = []
+                        #skillNames = []
 
-                        skillNames = []
+                        #skillCost = []
 
-                        for skill in skillname:
-                                skills = skill.find("a")
-                                if skills.text not in skillNames:
-                                        skillNames.append(skills.text)
+                        # Get Skill Names
+                        #for skill in skillname:
+                                #skills = skill.find("a")
+                                #f skills.text not in skillNames:
+                                        #skillNames.append(skills.text)
                                 #print(skills.text)
 
-                        print(skillNames)
+                        #print(elements)
 
-                        for element in elements:
-                                paragraph = element.find("p")
-                                skillList.append(paragraph.text)
+                        # Get Skill Descs
+                        #for element in elements:
+                                #paragraph = element.find("p")
+                                #killList.append(paragraph.text)
                                 #print(paragraph.text)
 
-                        desc = ""
+                        #desc = ""
 
-                        for i in range(len(skillNames)):
-                                desc += skillNames[i] + "\n" + skillList[i]
+                        #for i in range(len(skillNames)):
+                                #desc += "__**" + skillNames[i] + "**__" + "\n" + skillList[i]
+
+                        HP = results.find(id='adv-hp').text
+                        #print(HP.text)
+
+                        Str = results.find(id='adv-str').text
+                        #print(Str.text)
+
+                        Element = ""
+
+                        Weapon = "Dragon"
+                        
+                        spans = soup.find_all('img', alt=True)
+                        for line in spans:
+                                if "Element" in line['alt']:
+                                        Element = line['alt'].split(" ")[2][:-4]
+                                if "Weapon" in line['alt']:
+                                        Weapon = line['alt'].split(" ")[2][:-4]
+
+                        Color = {
+                        "Flame" : 15158332,
+                        "Water" : 1752220,
+                        "Wind" : 3066993,
+                        "Shadow" : 800080,
+                        "Light" : 16776960
+                        }
+
+                        # VERY MESSY
+
+                        #To Parse
+                        skillTable = []
+
+                        #Contains Skill Description
+                        skillDesc = []
+
+                        #Contains Skill SP Cost
+                        skillDetails = []
+                        temp = []
+
+                        test = results.find_all("div", class_="skill-table")
+                        for res in test:
+                                skillTable.append(res.text.split('\n\n'))
+
+
+                        #Skill Desciption & Details
+                        for i in range(len(skillTable)):
+                                temp.append(skillTable[i][-4])
+
+                                #Removes preceding skill details
+                                desc = skillTable[i][-3].split('\n')
+                                skillDesc.append(desc[-1])
+                        
+
+                        #Cleaning
+                        for i in temp:
+                                skillDetails.append(i.split('\n'))
+
+
+                        #Formatting Skill Desc
+                        for i in range(len(skillDesc)):
+                                skillDesc[i] = skillDesc[i].replace(".If", ".\n\nIf")
+                                skillDesc[i] = skillDesc[i].replace(". If", ".\n\nIf")
+                                skillDesc[i] = skillDesc[i].replace(".  If", ".\n\nIf")
+
+                                skillDesc[i] = skillDesc[i].replace(". This", ".\n\nThis")
+                                skillDesc[i] = skillDesc[i].replace(".This", ".\n\nThis")
+
+                                skillDesc[i] = skillDesc[i].replace(".When", ".\n\nWhen")
+                                skillDesc[i] = skillDesc[i].replace(". When", ".\n\nWhen")
+
+                                skillDesc[i] = skillDesc[i].replace(". Also", ".\n\nAlso")
+                                
+                                skillDesc[i] = skillDesc[i].replace("・", "\n\n・")
+                                
+                                skillDesc[i] = skillDesc[i].replace(".Lv", ".\n\nLv")
+                                skillDesc[i] = skillDesc[i].replace(".In", ".\n\nIn")
+                                
+                                skillDesc[i] = skillDesc[i].replace("%The", "%\n\nThe")
+                                skillDesc[i] = skillDesc[i].replace(". The", ".\n\nThe")
 
                         # Scraping Icon
-                        page = requests.get(iconURL)
-
-                        soup = BeautifulSoup(page.content, "html.parser")
+                        altURL = ""
                         for a in soup.find_all('a', href=True):
-                                if('r05' in a['href']):
-                                        print("Found the URL:", a['href'])
-                                        charID = a['href'].replace("/w", '')[:-8]
+                                # ADVENTURER ID
+                                if('r05' in a['href'] or 'r04'in a['href'] or 'r03' in a['href']):
+                                        #print("Found the URL:", a['href'])
+                                        title = soup.find('title').get_text().replace("- Adventurer", '')
+                                        charID = a['href'].replace("/w", '')[:-17]
                                         charID = charID[6:]
-                                        print(charID)
+                                        #print("CharID: " + charID)
                                         iconURL = "https://yvsdrop.github.io/dl-assets/storysprites/"+charID+"/"+charID+".png"
                                         break
-                        print(iconURL)
-                        
-                        embed = discord.Embed(title = title, url = URL, description = desc,)
-                        embed.set_author(name = epithet, icon_url = iconURL)
+                                # DRAGON ID
+                                elif('_01' in a['href']):
+                                        #print("Found the URL:", a['href'])
+                                        title = soup.find('title').get_text().replace("- Dragon", '')
+                                        charID = a['href'].replace("/w", '')[:-13]
+                                        charID = charID[6:]
+                                        #print("CharID: " + charID)
+                                        iconURL = "https://yvsdrop.github.io/dl-assets/storysprites/"+charID+"/"+charID+".png"
+                                        # Sometimes URL above breaks, for contingency
+                                        altURL = "https://yvsdrop.github.io/dl-assets/storysprites/"+charID+"/"+charID+"_parts_c000.png"
+                                        break
+                        epithet = soup.find("div", class_="panel-heading").get_text().replace(charName, '')
+
+                        # GENERATING THE EMBEDDED FILE
+                        # Character Details
+                        embed = discord.Embed(title = title, url = URL, description = "**HP: **" + HP + "  " + "**Str: **" + Str + "\n" + "**Element: **" + Element + "  " + "**Weapon: **" + Weapon, color = Color[Element])
+                        embed.set_author(name = epithet)
+                        if requests.get((iconURL)).status_code == 200:
+                                embed.set_thumbnail(url=iconURL)
+                        else:
+                                embed.set_thumbnail(url=altURL)
+
                         await message.channel.send(embed=embed)
-                                
+
+                        # SKills
+                        embed = discord.Embed(title = "Skills", color = Color[Element])
+                        for i in range(len(skillDesc)):
+                                #Checks if skill is Shareable
+                                sharedIndex = skillDetails[i][2].find('Shared')
+                                #Adds a line break between SP Cost and Shared SP Cost
+                                if sharedIndex != -1:
+                                        formatted_line = skillDetails[i][2][:sharedIndex] + "\n" + skillDetails[i][2][sharedIndex:]
+                                #Skill listed isn't shareable
+                                else:
+                                        formatted_line = skillDetails[i][2]
+                                embed.add_field(name = "__**" + skillDetails[i][1] + "**__", value = skillDesc[i][:-12] + "\n" + "**" + formatted_line + "**", inline = True)
+                        await message.channel.send(embed=embed)
 
 
 bot.run(DISCORD_TOKEN)
