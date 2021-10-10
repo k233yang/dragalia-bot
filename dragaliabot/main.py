@@ -63,53 +63,33 @@ async def on_message(message):
                         soup = BeautifulSoup(page.content, "html.parser")
                         results = soup.find(id="mw-content-text")
                         spans = soup.find_all('img', alt=True)
+                        links = soup.find_all('a', href=True)
 
-                        Element = ""
-                        Weapon = "Dragon"
+                        element = ""
+                        weapon = "Dragon"
                         
-                        thisChar = unit.Unit(results, spans)
+                        thisChar = unit.Unit(results, spans, links, soup)
                         charStats = thisChar.charStats
+                        charSkills = thisChar.charSkills
 
                         HP = charStats.hp
                         Str = charStats.str
-                        Element = charStats.element
-                        Weapon = charStats.weapon         
+                        element = charStats.element
+                        weapon = charStats.weapon     
+                        skillDesc = charSkills.skillDescription
+                        skillDetails = charSkills.skillDet 
 
-                        s = skills.Skills(results)
-                        skillDesc = []
-                        skillDetails = []
-                        skillDesc = s.skillDescription
-                        skillDetails = s.skillDet
+                        iconURL = thisChar.charStats.iconURL
+                        altURL = thisChar.charStats.altURL 
+                        title = thisChar.charStats.title
 
-                        # Scraping Icon
-                        altURL = ""
-                        for a in soup.find_all('a', href=True):
-                                # ADVENTURER ID
-                                if('r05' in a['href'] or 'r04'in a['href'] or 'r03' in a['href']):
-                                        #print("Found the URL:", a['href'])
-                                        title = soup.find('title').get_text().replace("- Adventurer", '')
-                                        charID = a['href'].replace("/w", '')[:-17]
-                                        charID = charID[6:]
-                                        #print("CharID: " + charID)
-                                        iconURL = "https://yvsdrop.github.io/dl-assets/storysprites/"+charID+"/"+charID+".png"
-                                        break
-                                # DRAGON ID
-                                elif('_01' in a['href']):
-                                        #print("Found the URL:", a['href'])
-                                        title = soup.find('title').get_text().replace("- Dragon", '')
-                                        charID = a['href'].replace("/w", '')[:-13]
-                                        charID = charID[6:]
-                                        #print("CharID: " + charID)
-                                        iconURL = "https://yvsdrop.github.io/dl-assets/storysprites/"+charID+"/"+charID+".png"
-                                        # Sometimes URL above breaks, for contingency
-                                        altURL = "https://yvsdrop.github.io/dl-assets/storysprites/"+charID+"/"+charID+"_parts_c000.png"
-                                        break
+
                         epithet = soup.find("div", class_="panel-heading").get_text().replace(charName, '')
 
                         # GENERATING THE EMBEDDED FILE
                         # Character Details
 
-                        embed = discord.Embed(title = title, url = URL, description = "**HP: **" + HP + "  " + "**Str: **" + Str + "\n" + "**Element: **" + Element + "  " + "**Weapon: **" + Weapon, color = data.Color[Element])
+                        embed = discord.Embed(title = title, url = URL, description = "**HP: **" + HP + "  " + "**Str: **" + Str + "\n" + "**Element: **" + element + "  " + "**Weapon: **" + weapon, color = data.Color[element])
                         embed.set_author(name = epithet)
                         if requests.get((iconURL)).status_code == 200:
                                 embed.set_thumbnail(url=iconURL)
@@ -119,7 +99,7 @@ async def on_message(message):
                         await message.channel.send(embed=embed)
 
                         # Skills
-                        embed = discord.Embed(title = "Skills", color = data.Color[Element])
+                        embed = discord.Embed(title = "Skills", color = data.Color[element])
                         for i in range(len(skillDesc)):
                                 #Checks if skill is Shareable
                                 sharedIndex = skillDetails[i][2].find('Shared')

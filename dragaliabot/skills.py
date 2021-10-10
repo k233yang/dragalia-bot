@@ -45,6 +45,9 @@ class Skills:
             skillDesc[i] = skillDesc[i].replace("%The", "%\n\nThe")
             skillDesc[i] = skillDesc[i].replace(". The", ".\n\nThe")
 
+            skillDesc[i] = skillDesc[i].replace(".Phase", ".\n\nPhase")
+            skillDesc[i] = skillDesc[i].replace(". Phase", ".\n\nPhase")
+
         return skillDesc
 
     def getSkillDetails(self, results):
