@@ -12,24 +12,6 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = discord.Client()
 
-URL = "https://dragalialost.wiki/w/Isaac"
-page = requests.get(URL)
-
-soup = BeautifulSoup(page.content, "html.parser")
-
-results = soup.find(id="mw-content-text")
-
-elements = results.find_all("div", class_="skill-display-content")
-#elements = results.find_all("p")
-
-skillList = []
-
-for element in elements:
-        paragraph = element.find("p")
-        skillList.append(paragraph.text)
-
-for x in skillList:
-        print(x)
 
 @bot.event
 async def on_ready():
@@ -48,14 +30,52 @@ async def on_message(message):
         #if message.content == "hello":
         #        await message.channel.send("hey dirtbag")
         if message.content[0:3] == "dl!":
-                match message.content[3:length]:
-                        case " help":
-                                await message.channel.send("stfu")
-                        case " hello":
-                                await message.channel.send("smh")
-                        case " Isaac":
-                                for x in skillList:
-                                        await message.channel.send(x)
+                input = message.content[3:length]
+                if message.content[3] == ' ':
+                        input = message.content[4:length]
+                
+                if input.strip() == "help":
+                        await message.channel.send("stfu")
+                elif input.strip() == " hello":
+                        await message.channel.send("smh")
+                elif not(' ' in input):
+                        URL = "https://dragalialost.wiki/w/" + message.content[3:length]
+                        page = requests.get(URL)
+
+                        soup = BeautifulSoup(page.content, "html.parser")
+                        results = soup.find(id="mw-content-text")
+
+                        elements = results.find_all("div", class_="skill-display-content")
+
+                        skillList = []
+
+                        for element in elements:
+                                paragraph = element.find("p")
+                                skillList.append(paragraph.text)
+
+                        for x in skillList:
+                                print(x)
+                                await message.channel.send(x)
+                elif ' ' in input:
+                        character = input
+                        character.replace(' ', '_')
+                        URL = "https://dragalialost.wiki/w/" + character
+                        page = requests.get(URL)
+
+                        soup = BeautifulSoup(page.content, "html.parser")
+                        results = soup.find(id="mw-content-text")
+
+                        elements = results.find_all("div", class_="skill-display-content")
+
+                        skillList = []
+
+                        for element in elements:
+                                paragraph = element.find("p")
+                                skillList.append(paragraph.text)
+
+                        for x in skillList:
+                                print(x)
+                                await message.channel.send(x)
                                 
 
 bot.run(DISCORD_TOKEN)
