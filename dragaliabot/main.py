@@ -71,6 +71,7 @@ async def on_message(message):
                         thisChar = unit.Unit(results, spans, links, soup)
                         charStats = thisChar.charStats
                         charSkills = thisChar.charSkills
+                        charAbilities = thisChar.charAbilities
 
                         HP = charStats.hp
                         Str = charStats.str
@@ -83,13 +84,21 @@ async def on_message(message):
                         altURL = thisChar.charStats.altURL 
                         title = thisChar.charStats.title
 
+                        abilities = charAbilities.abilityDescription
+                        abilityNames = charAbilities.abilityName
+
+                        #for i in range(len(abilities)):
+                            #print(abilityNames[i]+"\n"+abilities[i]+"\n")
 
                         epithet = soup.find("div", class_="panel-heading").get_text().replace(charName, '')
 
                         # GENERATING THE EMBEDDED FILE
                         # Character Details
 
-                        embed = discord.Embed(title = title, url = URL, description = "**HP: **" + HP + "  " + "**Str: **" + Str + "\n" + "**Element: **" + element + "  " + "**Weapon: **" + weapon, color = data.Color[element])
+                        if weapon is not None:
+                            embed = discord.Embed(title = title, url = URL, description = "**HP: **" + HP + "  " + "**Str: **" + Str + "\n" + "**Element: **" + element + "  " + "**Weapon: **" + weapon, color = data.Color[element])
+                        else:
+                            embed = discord.Embed(title = title, url = URL, description = "**HP: **" + HP + "  " + "**Str: **" + Str + "\n" + "**Element: **" + element,color = data.Color[element])
                         embed.set_author(name = epithet)
                         if requests.get((iconURL)).status_code == 200:
                                 embed.set_thumbnail(url=iconURL)
