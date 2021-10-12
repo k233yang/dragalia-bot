@@ -87,8 +87,9 @@ async def on_message(message):
                         abilities = charAbilities.abilityDescription
                         abilityNames = charAbilities.abilityName
 
-                        #for i in range(len(abilities)):
-                            #print(abilityNames[i]+"\n"+abilities[i]+"\n")
+
+                        for i in range(len(abilityNames)):
+                            print(abilityNames[i]+"\n")
 
                         epithet = soup.find("div", class_="panel-heading").get_text().replace(charName, '')
 
@@ -119,6 +120,12 @@ async def on_message(message):
                                 else:
                                         formatted_line = skillDetails[i][2]
                                 embed.add_field(name = "__**" + skillDetails[i][1] + "**__", value = skillDesc[i][:-12] + "\n" + "**" + formatted_line + "**", inline = True)
+                        await message.channel.send(embed=embed)
+
+                        #Abilities
+                        embed = discord.Embed(title = "Abilities", color = data.Color[element])
+                        for i in range (len(abilities)):
+                            embed.add_field(name = "__**" + "Skill Name" + "**__", value = abilities[i])
                         await message.channel.send(embed=embed)
 
 
