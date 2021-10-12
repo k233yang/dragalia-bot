@@ -187,11 +187,11 @@ async def on_message(message):
                             sharedIndex = skillDetails[i][2].find('Shared')
                             #Adds a line break between SP Cost and Shared SP Cost
                             if sharedIndex != -1:
-                                    formatted_line = skillDetails[i][2][:sharedIndex] + "\n" + skillDetails[i][2][sharedIndex:]
+                                    formatted_line = skillDetails[i][2][1:sharedIndex] + "\n" + skillDetails[i][2][sharedIndex:]
                             #Skill listed isn't shareable
                             else:
                                     formatted_line = skillDetails[i][2]
-                            embed.add_field(name = "__**" + skillDetails[i][1] + "**__", value = skillDesc[i][:-12] + "\n" + "**" + formatted_line + "**", inline = True)
+                            embed.add_field(name = "__**" + skillDetails[i][1][1:] + "**__", value = skillDesc[i][:-12] + "\n" + "**" + formatted_line + "**", inline = True)
                     await message.channel.send(embed=embed)
 
                     #Co-abilities
