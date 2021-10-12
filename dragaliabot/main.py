@@ -42,12 +42,12 @@ async def on_ready():
         newAdv = []
         
         # GRABS LIST OF EXISTING ADVENTURERS
-        advFile = open('advList.txt', 'r')
+        advFile = open('dragaliabot/advList.txt', 'r')
         Lines = advFile.readlines()
 
         for line in Lines:
             advList.append(line.strip())
-        print(advList)
+        #print(advList)
 
         page = requests.get(advlistURL)
         soup = BeautifulSoup(page.content, "html.parser")
@@ -62,7 +62,7 @@ async def on_ready():
                 if cols[1] not in advList:
                     advList.append(cols[1])
                     newAdv.append(cols[1])
-                    print("New Adventurer: " + cols[1])
+                    #print("New Adventurer: " + cols[1])
         if (len(newAdv) > 0):
             with open("advList.txt", "a") as advOutput: 
                 for i in newAdv:
@@ -74,12 +74,12 @@ async def on_ready():
         newDragon = []
         
         # GRABS LIST OF EXISTING DRAGONS
-        dragonFile = open('dragonList.txt', 'r')
+        dragonFile = open('dragaliabot/dragonList.txt', 'r', encoding="ISO-8859-1")
         Lines = dragonFile.readlines()
 
         for line in Lines:
             dragonList.append(line.strip())
-        print(dragonList)
+        #print(dragonList)
 
         page = requests.get(dragonlistURL)
         soup = BeautifulSoup(page.content, "html.parser")
@@ -94,7 +94,7 @@ async def on_ready():
                 if cols[1] not in dragonList:
                     newDragon.append(cols[1])
                     dragonList.append(cols[1])
-                    print("New Dragon: " + cols[1])
+                    #print("New Dragon: " + cols[1])
 
         # ADDS NEW DRAGONS(IF ANY)
         if(len(newDragon) > 0):
@@ -141,8 +141,10 @@ async def on_message(message):
 
                     element = ""
                     weapon = "Dragon"
+
+                    isChar = charName in advList
                     
-                    thisChar = unit.Unit(results, spans, links, soup)
+                    thisChar = unit.Unit(results, spans, links, soup, isChar)
                     charStats = thisChar.charStats
                     charSkills = thisChar.charSkills
                     charAbilities = thisChar.charAbilities
@@ -194,10 +196,16 @@ async def on_message(message):
 
                     #Co-abilities
                     abilityCounter = 0
-                    embed = discord.Embed(title = "Co-abilities" if charName in advList else "Abilities", color = data.Color[element])
+                    embed = discord.Embed(title = "Co-abilities" if isChar else "Abilities", color = data.Color[element])
                     for i in range (len(abilities)):
-                        if (i+1)%5 == 0 and i <= 9:
+                        if i == 4:
+                            embed.add_field(name = "__**" + abilityNames[abilityCounter] + "**__", value = abilities[i][:-12])
+                            abilityCounter += 1
+                        elif i == 9 and isChar:
                             embed.add_field(name = "__**" + abilityNames[abilityCounter] + "**__", value = abilities[i])
+                            abilityCounter += 1
+                        elif i == 9 and not isChar:
+                            embed.add_field(name = "__**" + abilityNames[abilityCounter] + "**__", value = abilities[i][:-11])
                             abilityCounter += 1
                     await message.channel.send(embed=embed)
 
@@ -206,7 +214,7 @@ async def on_message(message):
                         embed = discord.Embed(title = "Abilities", color = data.Color[element])
                         for i in range (len(abilities)):
                             if i> 9 and (i+1)%2 == 0:
-                                embed.add_field(name = "__**" + abilityNames[abilityCounter] + "**__", value = abilities[i])
+                                embed.add_field(name = "__**" + abilityNames[abilityCounter] + "**__", value = abilities[i][:-12])
                                 abilityCounter += 1
                         await message.channel.send(embed=embed)
 

@@ -2,11 +2,11 @@ from bs4 import BeautifulSoup
 
 
 class Abilities:
-    def __init__(self, soupResults):
-        self.abilityDescription = self.getAbilityDescription(soupResults)
+    def __init__(self, soupResults, isChar):
+        self.abilityDescription = self.getAbilityDescription(soupResults, isChar)
         self.abilityName = self.getAbilityName(soupResults)
 
-    def getAbilityDescription(self, soupResults):
+    def getAbilityDescription(self, soupResults, isChar):
         descriptions = []
         ability = soupResults.find_all("div", class_ = "ability-table")
         for k in range(len(ability)):
@@ -26,16 +26,23 @@ class Abilities:
             
             #Checking list for ability descriptions and hardcoding indexes
             for i in range(len(skillParts)):
+                #print("Index "+ str(i) + " " + skillParts[i])
                 #For some reason the chain coabs has different indexing than the other abilities/coabs
                 if k == 1 and (i+4)%7 == 0 and i >= 10:
+                    #print("Index "+ str(i) + " " + skillParts[i])
                     #print(skillParts[0].lstrip()+" Lv"+str((i+4)/7 -1)[0])
                     #print(skillParts[i][1:])
                     descriptions.append(skillParts[i][1:])
                 #Every 6th, 13th, 20th, etc index will have the skill description
                 elif k!=1 and (i+1)%7 == 0:
+                    #print("Index "+ str(i) + " " + skillParts[i])
                     #print(skillParts[2].lstrip()+" Lv"+str((i+1)/7)[0])
                     #print(skillParts[i][1:])
                     descriptions.append(skillParts[i][1:])
+                elif (i+1)%7 == 0 and isChar == False:
+                    #print("Index "+ str(i) + " " + skillParts[i])
+                    descriptions.append(skillParts[i][1:])
+
                 
         return descriptions
 
