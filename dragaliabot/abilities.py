@@ -10,38 +10,38 @@ class Abilities:
         descriptions = []
         ability = soupResults.find_all("div", class_ = "ability-table")
         for k in range(len(ability)):
-            firstSkill = ability[k].get_text().strip()
-            skillParts = []
+            firstAbility = ability[k].get_text().strip()
+            AbilityParts = []
             track = 0
             j = 0
             #Adding every line separated by a newline to a list
-            for i in range(len(firstSkill)):
-                if firstSkill[i] == '\n':
-                    skillParts.append(firstSkill[track:i])
+            for i in range(len(firstAbility)):
+                if firstAbility[i] == '\n':
+                    AbilityParts.append(firstAbility[track:i])
                     track += j
                     j = 0
-                elif i == len(firstSkill) -1:
-                    skillParts.append(firstSkill[track:i+1])
+                elif i == len(firstAbility) -1:
+                    AbilityParts.append(firstAbility[track:i+1])
                 j+=1
             
             #Checking list for ability descriptions and hardcoding indexes
-            for i in range(len(skillParts)):
-                #print("Index "+ str(i) + " " + skillParts[i])
+            for i in range(len(AbilityParts)):
+                #print("Index "+ str(i) + " " + AbilityParts[i])
                 #For some reason the chain coabs has different indexing than the other abilities/coabs
-                if k == 1 and (i+4)%7 == 0 and i >= 10:
-                    #print("Index "+ str(i) + " " + skillParts[i])
-                    #print(skillParts[0].lstrip()+" Lv"+str((i+4)/7 -1)[0])
-                    #print(skillParts[i][1:])
-                    descriptions.append(skillParts[i][1:])
-                #Every 6th, 13th, 20th, etc index will have the skill description
+                if k == 1 and (i+4)%7 == 0 and i >= 10 :
+                    #print("Index "+ str(i) + " " + AbilityParts[i])
+                    #print(AbilityParts[0].lstrip()+" Lv"+str((i+4)/7 -1)[0])
+                    #print(AbilityParts[i][1:])
+                    descriptions.append(AbilityParts[i][1:])
+                #Every 6th, 13th, 20th, etc index will have the Ability description
                 elif k!=1 and (i+1)%7 == 0:
-                    #print("Index "+ str(i) + " " + skillParts[i])
-                    #print(skillParts[2].lstrip()+" Lv"+str((i+1)/7)[0])
-                    #print(skillParts[i][1:])
-                    descriptions.append(skillParts[i][1:])
+                    #print("Index "+ str(i) + " " + AbilityParts[i])
+                    #print(AbilityParts[2].lstrip()+" Lv"+str((i+1)/7)[0])
+                    #print(AbilityParts[i][1:])
+                    descriptions.append(AbilityParts[i][1:])
                 elif (i+1)%7 == 0 and isChar == False:
-                    #print("Index "+ str(i) + " " + skillParts[i])
-                    descriptions.append(skillParts[i][1:])
+                    #print("Index "+ str(i) + " " + AbilityParts[i])
+                    descriptions.append(AbilityParts[i][1:])
 
                 
         return descriptions
