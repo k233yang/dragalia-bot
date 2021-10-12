@@ -36,8 +36,10 @@ class Skills:
             skillDesc[i] = skillDesc[i].replace(". When", ".\n\nWhen")
 
             skillDesc[i] = skillDesc[i].replace(". Also", ".\n\nAlso")
+            skillDesc[i] = skillDesc[i].replace(".Also", ".\n\nAlso")
 
             skillDesc[i] = skillDesc[i].replace("・", "\n\n・")
+            skillDesc[i] = skillDesc[i].replace(":・", "\n\n・")
                                 
             skillDesc[i] = skillDesc[i].replace(".Lv", ".\n\nLv")
             skillDesc[i] = skillDesc[i].replace(".In", ".\n\nIn")
