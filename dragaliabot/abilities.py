@@ -27,7 +27,7 @@ class Abilities:
             #Checking list for ability descriptions and hardcoding indexes
             for i in range(len(skillParts)):
                 #For some reason the chain coabs has different indexing than the other abilities/coabs
-                if k == 1 and (i+4)%7 == 0 and i != len(skillParts)-1 and i >= 10:
+                if k == 1 and (i+4)%7 == 0 and i >= 10:
                     #print(skillParts[0].lstrip()+" Lv"+str((i+4)/7 -1)[0])
                     #print(skillParts[i][1:])
                     descriptions.append(skillParts[i][1:])
