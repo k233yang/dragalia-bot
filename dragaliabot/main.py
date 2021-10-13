@@ -203,7 +203,7 @@ async def on_message(message):
                     embed.add_field(name = "__**" + abilityNames[abilityCounter] + "**__", value = abilities[i])
                     abilityCounter += 1
                 elif i == 9 and not isChar:
-                    embed.add_field(name = "__**" + abilityNames[abilityCounter] + "**__", value = abilities[i][:-11])
+                    embed.add_field(name = "__**" + abilityNames[abilityCounter] + "**__", value = abilities[i][:-12])
                     abilityCounter += 1
             await message.channel.send(embed=embed)
 

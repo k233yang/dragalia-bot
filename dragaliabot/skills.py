@@ -49,6 +49,11 @@ class Skills:
 
             skillDesc[i] = skillDesc[i].replace(".Phase", ".\n\nPhase")
             skillDesc[i] = skillDesc[i].replace(". Phase", ".\n\nPhase")
+            
+            skillDesc[i] = skillDesc[i].replace(".-", ".\n\n-")
+            skillDesc[i] = skillDesc[i].replace(". -", ".\n\n-")
+
+            skillDesc[i] = skillDesc[i].replace(".)", ".)\n\n")
 
         return skillDesc
 

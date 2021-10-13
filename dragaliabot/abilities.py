@@ -43,7 +43,36 @@ class Abilities:
                     #print("Index "+ str(i) + " " + AbilityParts[i])
                     descriptions.append(AbilityParts[i][1:])
 
-                
+        for i in range(len(descriptions)):
+            descriptions[i] = descriptions[i].replace(".If", ".\n\nIf")
+            descriptions[i] = descriptions[i].replace(". If", ".\n\nIf")
+            descriptions[i] = descriptions[i].replace(".  If", ".\n\nIf")
+
+            descriptions[i] = descriptions[i].replace(". This", ".\n\nThis")
+            descriptions[i] = descriptions[i].replace(".This", ".\n\nThis")
+
+            descriptions[i] = descriptions[i].replace(".When", ".\n\nWhen")
+            descriptions[i] = descriptions[i].replace(". When", ".\n\nWhen")
+
+            descriptions[i] = descriptions[i].replace(". Also", ".\n\nAlso")
+            descriptions[i] = descriptions[i].replace(".Also", ".\n\nAlso")
+
+            descriptions[i] = descriptions[i].replace("・", "\n\n・")
+            descriptions[i] = descriptions[i].replace(":・", "\n\n・")
+                                
+            descriptions[i] = descriptions[i].replace(".Lv", ".\n\nLv")
+            descriptions[i] = descriptions[i].replace(".In", ".\n\nIn")
+                                
+            descriptions[i] = descriptions[i].replace("%The", "%\n\nThe")
+            descriptions[i] = descriptions[i].replace(". The", ".\n\nThe")
+
+            descriptions[i] = descriptions[i].replace(".Phase", ".\n\nPhase")
+            descriptions[i] = descriptions[i].replace(". Phase", ".\n\nPhase")
+            
+            descriptions[i] = descriptions[i].replace(".-", ".\n\n-")
+            descriptions[i] = descriptions[i].replace(". -", ".\n\n-")
+
+            descriptions[i] = descriptions[i].replace(".)", ".)\n\n")
         return descriptions
 
     def getAbilityName(self, soupResults):
