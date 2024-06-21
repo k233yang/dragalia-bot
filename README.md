@@ -7,7 +7,7 @@ You can input any character or dragon and it will pull up their name, stats, ele
 
 ## How to use
 
-Just add the bot to your Discord server and type `!dl charactername` or `!dl dragonname`
+Just add the bot to your Discord server and type `!dl charactername` or `!dl dragonname`.
 It's that simple!
 
 ## Character
